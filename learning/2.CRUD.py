@@ -1,10 +1,6 @@
-from fastapi import APIRouter
+from fastapi import FastAPI
 
-from .item_schema import create_model
-
-router = APIRouter(
-    prefix="/item"
-)
+app = FastAPI()
 
 items = [
     {"item_id": 1, "item_name":"untoc", "item_price":15000},
@@ -15,30 +11,28 @@ items = [
     {"item_id": 6, "item_name":"water", "item_price":100}
 ]
 
-@router.get("/")
+@app.get("/")
 def root():
     return {"message":"hello UNTOC"}
 
-@router.get("/get_items")
+@app.get("/get_items")
 def get_items(skip:int = 0, limit:int = 10):
     return items[skip : skip + limit]
 
-@router.get("/get_item")
+@app.get("/get_item")
 def get_item(item_id:int):
     for item in items:
         if item["item_id"] == item_id:
             return item
     return {"error": "Item not found"}
 
-@router.post("/create_item/{item_id}", response_model=create_model)
-def create_itme(item:create_model):
-    items.append({"item_id":item.item_id, 
-                  "item_name":item.item_name, 
-                  "item_price": item.item_price})
+@app.post("/create_item/{item_id}")
+def create_itme(item_id: int , item_name:str, item_price: int):
+    items.append({"item_id":item_id, "item_name":item_name, "item_price": item_price})
 
-    return items[item.item_id - 1]
+    return items[item_id - 1]
 
-@router.put("/update_item/{item_id}")
+@app.put("/update_item/{item_id}")
 def update_item(item_id: int, item_name: str, item_price: int):
     for item in items:
         if item["item_id"] == item_id:
@@ -48,7 +42,7 @@ def update_item(item_id: int, item_name: str, item_price: int):
     
     return {"error": "Item not found"}
 
-@router.delete("/delete_item/{item_id}")
+@app.delete("/delete_item/{item_id}")
 def delete_item(item_id: int):
     for item in items:
         if item["item_id"] == item_id:
