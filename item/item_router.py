@@ -30,7 +30,7 @@ def get_item(item_id:int):
             return item
     return {"error": "Item not found"}
 
-@router.post("/create_item/{item_id}", response_model=create_model)
+@router.post("/create_item", response_model=create_model)
 def create_itme(item:create_model):
     items.append({"item_id":item.item_id, 
                   "item_name":item.item_name, 
