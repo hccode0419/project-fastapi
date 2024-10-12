@@ -8,18 +8,17 @@ document.getElementById('item-form').addEventListener('submit', async function (
 
     // FastAPI로 POST 요청 보내기
     try {
-        const response = await fetch(`http://127.0.0.1:8000/item/create_item?item_id=${itemId}&item_name=${encodeURIComponent(itemName)}&item_price=${itemPrice}`, {
-            //?item_id=${itemId}&item_name=${encodeURIComponent(itemName)}&item_price=${itemPrice}
+        const response = await fetch(`http://127.0.0.1:8000/item/create_item`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             }         
-            // ,
-            // body: JSON.stringify({
-            //     item_id: parseInt(itemId),
-            //     item_name: itemName,
-            //     item_price: parseInt(itemPrice),
-            // }),
+            ,
+            body: JSON.stringify({
+                item_id: parseInt(itemId),
+                item_name: itemName,
+                item_price: parseInt(itemPrice),
+            }),
         });
 
         const result = await response.json();

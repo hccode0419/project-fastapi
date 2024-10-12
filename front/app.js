@@ -1,7 +1,7 @@
 // FastAPI로부터 상품 목록을 가져와서 HTML에 추가하는 함수
 async function fetchItems(skip = 0, limit = 10) {
     try {
-        const response = await fetch(`http://127.0.0.1:8000/item/get_all_item`, {
+        const response = await fetch(`http://127.0.0.1:8000/item/get_items`, {
             method: 'GET'  // 명시적으로 GET 메서드를 사용
         });
         const items = await response.json();
