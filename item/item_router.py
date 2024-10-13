@@ -72,4 +72,3 @@ def delete_item(item_id: int):
             deleted_item = items.pop(item_id-1)
             return {"message": "deleted", "deleted_item":deleted_item}
     return {"error": "Item not found"}
-
