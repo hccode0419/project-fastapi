@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Depends, Response,Security
 from sqlalchemy.orm import Session
 from database import get_itemdb
 
-from .item_schema import Create_item
+from .item_schema import Create_item, Modify_item
 from models import Item as Item_model
 
 router = APIRouter(
@@ -16,29 +16,30 @@ def insert_data(db, table):
     db.commit()
     db.refresh(table)
 
-items = [
-    {"item_id": 1, "item_name":"untoc", "item_price":15000},
-    {"item_id": 2, "item_name":"phone", "item_price":35000},
-    {"item_id": 3, "item_name":"computer", "item_price":24000},
-    {"item_id": 4, "item_name":"pencil", "item_price":1000},
-    {"item_id": 5, "item_name":"mouse", "item_price":2000},
-    {"item_id": 6, "item_name":"water", "item_price":100}
-]
+
 
 @router.get("/")
 def root():
     return {"message":"hello UNTOC"}
 
 @router.get("/get_items")
-def get_items(skip:int = 0, limit:int = 10):
-    return items[skip : skip + limit]
+def get_items(skip:int = 0, limit:int = 10, 
+              item_db: Session = Depends(get_itemdb)):
+    
+    item = item_db.query(Item_model).all()
+    if not item:
+        raise HTTPException(status_code=404, detail="item 내역이 없습니다.")
+    
+    return item[skip : skip + limit]
 
 @router.get("/get_item")
-def get_item(item_id:int):
-    for item in items:
-        if item["item_id"] == item_id:
-            return item
-    return {"error": "Item not found"}
+def get_item(item_id:int, 
+             item_db: Session = Depends(get_itemdb)):
+    item = item_db.query(Item_model).filter(Item_model.item_id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail=f"item_id : {item_id} 내역이 없습니다.")
+
+    return item
 
 
 @router.post("/create_item", response_model=Create_item)
@@ -55,21 +56,38 @@ def create_item(item:Create_item,
 
     return create_items
 
-@router.put("/update_item/{item_id}")
-def update_item(item_id: int, item_name: str, item_price: int):
-    for item in items:
-        if item["item_id"] == item_id:
-            item["item_name"] = item_name
-            item["item_price"] = item_price
-            return item
+@router.put("/update_item", response_model=Modify_item)
+def update_item(item: Modify_item,
+                item_id: int,
+                item_db: Session = Depends(get_itemdb)):
     
-    return {"error": "Item not found"}
+    modify_item = Modify_item(item_name=item.item_name,
+                              item_price=item.item_price,
+                              amount=item.amount)
+    
+    item = item_db.query(Item_model).filter(Item_model.item_id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail=f"item_id : {item_id} 내역이 없습니다.")
 
-@router.delete("/delete_item/{item_id}")
-def delete_item(item_id: int):
-    for item in items:
-        if item["item_id"] == item_id:
-            deleted_item = items.pop(item_id-1)
-            return {"message": "deleted", "deleted_item":deleted_item}
-    return {"error": "Item not found"}
+    item.item_name = modify_item.item_name
+    item.item_price = modify_item.item_price
+    item.amount = modify_item.amount
 
+    item_db.commit()
+    item_db.refresh(item)
+
+    return modify_item
+
+@router.delete("/delete_item")
+def delete_item(item_id: int,
+                item_db: Session = Depends(get_itemdb)):
+    item = item_db.query(Item_model).filter(Item_model.item_id == item_id)
+
+    if not item.first():
+        raise HTTPException(status_code=404, detail=f"item_id : {item_id} 내역이 없습니다.")
+    
+    item.delete()
+
+    item_db.commit()
+
+    return {"message":f"item_id : {item_id} - success delete"}
