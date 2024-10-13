@@ -12,8 +12,7 @@ document.getElementById('item-form').addEventListener('submit', async function (
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            }         
-            ,
+            },
             body: JSON.stringify({
                 item_id: parseInt(itemId),
                 item_name: itemName,

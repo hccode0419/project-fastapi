@@ -1,20 +1,10 @@
-from fastapi import APIRouter, HTTPException, Depends, Response,Security
+from fastapi import APIRouter
 
-from sqlalchemy.orm import Session
-from database import get_itemdb
-
-from .item_schema import Create_item
-from models import Item as Item_model
+from .item_schema import create_model
 
 router = APIRouter(
     prefix="/item"
 )
-
-
-def insert_data(db, table):
-    db.add(table)
-    db.commit()
-    db.refresh(table)
 
 items = [
     {"item_id": 1, "item_name":"untoc", "item_price":15000},
@@ -40,20 +30,13 @@ def get_item(item_id:int):
             return item
     return {"error": "Item not found"}
 
+@router.post("/create_item", response_model=create_model)
+def create_itme(item:create_model):
+    items.append({"item_id":item.item_id, 
+                  "item_name":item.item_name, 
+                  "item_price": item.item_price})
 
-@router.post("/create_item", response_model=Create_item)
-def create_item(item:Create_item, 
-                item_db: Session = Depends(get_itemdb)):
-    
-    create_items = Item_model(item_name=item.item_name, 
-                item_price=item.item_price,
-                amount=item.amount,
-                create_at=item.create_at,
-                create_date=item.create_date)
-
-    insert_data(item_db, create_items)
-
-    return create_items
+    return items[item.item_id - 1]
 
 @router.put("/update_item/{item_id}")
 def update_item(item_id: int, item_name: str, item_price: int):
@@ -72,4 +55,3 @@ def delete_item(item_id: int):
             deleted_item = items.pop(item_id-1)
             return {"message": "deleted", "deleted_item":deleted_item}
     return {"error": "Item not found"}
-
