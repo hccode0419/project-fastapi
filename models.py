@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean
-from database import item_Base
+from database import item_Base, user_Base
 
 
 # User 모델 정의
@@ -13,3 +13,10 @@ class Item(item_Base):
     create_at = Column(String(30), nullable=False)
     create_date = Column(DateTime, nullable=False)
  
+
+class User(user_Base):
+    __tablename__ = "user"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String(255), nullable=False)
+    
