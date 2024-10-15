@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from item.item_router import router as item_router
 
-from database import item_Base, item_engine
+from database import item_Base, item_engine, user_Base, user_engine
 app = FastAPI()
 
 origins = ["*"]
@@ -16,6 +16,7 @@ app.add_middleware(
 )
 
 item_Base.metadata.create_all(bind=item_engine)
+user_Base.metadata.create_all(bind=user_engine)
 
 app.include_router(item_router, tags=["item"])
 
