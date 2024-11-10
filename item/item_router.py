@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .item_schema import create_model
+from .item_schema import Create_model
 
 router = APIRouter(
     prefix="/item"
@@ -30,8 +30,8 @@ def get_item(item_id:int):
             return item
     return {"error": "Item not found"}
 
-@router.post("/create_item", response_model=create_model)
-def create_itme(item:create_model):
+@router.post("/create_item", response_model=Create_model)
+def create_itme(item:Create_model):
     items.append({"item_id":item.item_id, 
                   "item_name":item.item_name, 
                   "item_price": item.item_price})
