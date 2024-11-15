@@ -12,3 +12,4 @@ class Item(item_Base):
     amount = Column(Integer, nullable=False)
     create_at = Column(String(30), nullable=False)
     create_date = Column(DateTime, nullable=False)
+    
