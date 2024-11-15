@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Bool
 from database import item_Base
 
 
-# User 모델 정의
+# Item 모델 정의
 class Item(item_Base):
     __tablename__ = "item"
 
