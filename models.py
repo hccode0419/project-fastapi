@@ -18,5 +18,11 @@ class User(user_Base):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(String(255), nullable=False)
+    user_id = Column(String(50), nullable=False)
+    password = Column(String(50), nullable=False)
+    user_name = Column(String(30), nullable=False)
+    phone_number = Column(String(12), nullable=False)
+    email = Column(String(50), nullable=False)
+    phone_number = Column(String(12), nullable=False)
+    create_date = Column(DateTime, nullable=False)  
     
