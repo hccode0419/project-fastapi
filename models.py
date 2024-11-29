@@ -23,6 +23,5 @@ class User(user_Base):
     user_name = Column(String(30), nullable=False)
     phone_number = Column(String(12), nullable=False)
     email = Column(String(50), nullable=False)
-    phone_number = Column(String(12), nullable=False)
     create_date = Column(DateTime, nullable=False)  
     
